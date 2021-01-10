@@ -1,0 +1,66 @@
+
+<html ng-app="listaTelefonica">
+    <head>
+        <title>Lista Telefonica</title>
+        <link rel="stylesheet" type="text/css" href="bootstrap-5.0.0-beta1-dist/css/bootstrap.css">
+        <style>
+            .jumbotron{
+                background-color: aliceblue;
+                width: 400px;
+                margin-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+            .table{
+                margin-top:20px
+            }
+            .form-control{
+                margin-bottom: 5px;
+            }
+
+        </style>
+        <script src="angular-1.8.2/angular.js"></script>
+        <script>
+            angular.module("listaTelefonica",[])
+            angular.module("listaTelefonica").controller("listaTelefonicaCrtl", function($scope){
+                $scope.app="lista telefonica";
+                $scope.adicionarContato = function(contato){
+                    $scope.contatos.push(contato);
+
+                };
+                $scope.contatos=[
+                    {nome : "Moisés" , telefone :"9784125"},
+                    {nome : "israel" , telefone :"8487555"},
+                    {nome : "Camila" , telefone :"2222222"}
+                ];
+
+                        });
+         </script>
+    </head>
+    <body ng-controller=listaTelefonicaCrtl>
+        <div class="jumbotron">
+            <h3>{{app}}</h3>
+         <table class="table table-striped">
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefonica</th>
+                </tr>
+                <tr ng-repeat="contato in contatos">
+                <td>{{contato.nome}}</td>
+                <td>{{contato.telefone}}</td>
+
+                <!-- 2 forma de fazer /key and value
+                <td ng-repeat="(key, value) in contato">
+                    {{key + '_' + value}}
+                </td> -->
+                </tr>
+            </table>
+            <hr>
+            <input  class="form-control" type="text" ng-model="contato.nome" placeholder="Nome">
+            <input class="form-control" type="text" ng-model="contato.telefone" placeholder="Telefone">
+            <button class="btn btn-primary" ng-click="adicionarContato(contato)"> Adcionar Contato</button>
+        </div>
+
+    </body>
+</html>
