@@ -18,6 +18,12 @@
             .form-control{
                 margin-bottom: 5px;
             }
+            .selecionado{
+                background-color: red;
+            }
+            .negrito{
+                font-weight: bold;
+            }
 
         </style>
         <script src="angular-1.8.2/angular.js"></script>
@@ -26,14 +32,35 @@
             angular.module("listaTelefonica").controller("listaTelefonicaCrtl", function($scope){
                 $scope.app="lista telefonica";
                 $scope.adicionarContato = function(contato){
-                    $scope.contatos.push(contato);
-
+                    $scope.contatos.push(angular.copy(contato));
+                    delete $scope.contato
                 };
+                $scope.apagarContatos = function(contatos){
+                    $scope.contatos = contatos.filter(function (contato){
+                        if(!contato.selecionado) return contato;
+                    });
+                };  
+
+                $scope.isContatoSelecionado = function (contatos){
+                    return contatos.some(function (contato){
+                        return contato.selecionado;
+                    });
+                }
+                
                 $scope.contatos=[
-                    {nome : "Moisés" , telefone :"9784125"},
-                    {nome : "israel" , telefone :"8487555"},
-                    {nome : "Camila" , telefone :"2222222"}
+                    {nome : "Moisés" , telefone :"9784125" , cor :"blue"},
+                    {nome : "israel" , telefone :"8487555", cor :"red"},
+                    {nome : "Camila" , telefone :"2222222", cor :"yellow"}
                 ];
+
+                $scope.operadoras=[
+                    {nome : "tim", codigo:11, categoria :"Celular"},
+                    {nome : "Embratel", codigo:02, categoria :"Fixo"},
+                    {nome : "GVT", codigo:622, categoria :"Fixo"},
+                    {nome : "oi", codigo:33, categoria :"Celular"},
+                    {nome : "claro", codigo:98, categoria :"Celular"}
+                ];
+               $scope.classe = "selecionado";
 
                         });
          </script>
@@ -41,14 +68,21 @@
     <body ng-controller=listaTelefonicaCrtl>
         <div class="jumbotron">
             <h3>{{app}}</h3>
-         <table class="table table-striped">
+            {{contatos}}
+         <table  ng-show="contatos.length > 0"class="table table-striped">
                 <tr>
+                    <th></th>
                     <th>Nome</th>
                     <th>Telefonica</th>
+                    <th>Operadora</th>
+                    <th></th>
                 </tr>
-                <tr ng-repeat="contato in contatos">
+              <tr ng-class="{'selecionado negrito' : contato.selecionado}" ng-repeat="contato in contatos">
+                <td><input type="checkbox" ng-model="contato.selecionado"/></td>
                 <td>{{contato.nome}}</td>
                 <td>{{contato.telefone}}</td>
+                <td>{{contato.operadora.nome}}</td>
+                <td><div style="width:20px; height:20px;" ng-style="{'background-color':contato.cor}"></div></td>
 
                 <!-- 2 forma de fazer /key and value
                 <td ng-repeat="(key, value) in contato">
@@ -59,8 +93,17 @@
             <hr>
             <input  class="form-control" type="text" ng-model="contato.nome" placeholder="Nome">
             <input class="form-control" type="text" ng-model="contato.telefone" placeholder="Telefone">
-            <button class="btn btn-primary" ng-click="adicionarContato(contato)"> Adcionar Contato</button>
+            <select ng-model="contato.operadora"class="form-control" ng-options="operadora.nome group by operadora.categoria for operadora in operadoras" >
+                <option value="">Selecione uma operadora </option>
+            </select>
+
+            <button class="btn btn-primary form-control" ng-click="adicionarContato(contato)" ng-disabled="!contato.nome || !contato.telefone"> Adcionar Contato</button>
+            <button class="btn btn-danger form-control" ng-click="apagarContatos(contatos)" ng-show="isContatoSelecionado(contatos)"> Remover Contato</button>
+         
+
+        
         </div>
+        <div style="margin-top:50px">Criado por Moisés Ezequiel</div>
 
     </body>
 </html>
