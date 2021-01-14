@@ -1,6 +1,7 @@
 
 <html ng-app="listaTelefonica">
     <head>
+        <meta charset="UTF-8">
         <title>Lista Telefonica</title>
         <link rel="stylesheet" type="text/css" href="bootstrap-5.0.0-beta1-dist/css/bootstrap.css">
         <style>
@@ -31,9 +32,11 @@
             angular.module("listaTelefonica",[])
             angular.module("listaTelefonica").controller("listaTelefonicaCrtl", function($scope){
                 $scope.app="lista telefonica";
+
                 $scope.adicionarContato = function(contato){
                     $scope.contatos.push(angular.copy(contato));
                     delete $scope.contato
+                    $scope.formAdd.$setPristine();
                 };
                 $scope.apagarContatos = function(contatos){
                     $scope.contatos = contatos.filter(function (contato){
@@ -68,7 +71,6 @@
     <body ng-controller=listaTelefonicaCrtl>
         <div class="jumbotron">
             <h3>{{app}}</h3>
-            {{contatos}}
          <table  ng-show="contatos.length > 0"class="table table-striped">
                 <tr>
                     <th></th>
@@ -91,11 +93,28 @@
                 </tr>
             </table>
             <hr>
-            <input  class="form-control" type="text" ng-model="contato.nome" placeholder="Nome">
-            <input class="form-control" type="text" ng-model="contato.telefone" placeholder="Telefone">
+           <!-- e valido {{contratoForm.$valid}} <br/>
+           e invalido {{contratoForm.$invalid}} <br/> -->
+            <form name="formAdd"> 
+            <input  class="form-control" type="text" ng-model="contato.nome" name="nome" placeholder="Nome" ng-required="true" ng-minlength="10"> 
+            <input class="form-control" type="text" ng-model="contato.telefone" name="telefone" placeholder="Telefone" ng-required="true" ng-pattern="/^\d{4,5}-{4}$/">
             <select ng-model="contato.operadora"class="form-control" ng-options="operadora.nome group by operadora.categoria for operadora in operadoras" >
                 <option value="">Selecione uma operadora </option>
             </select>
+            </form>
+
+        <div ng-show="formAdd.nome.$error.required && formAdd.nome.$dirty" class="alert alert-danger">
+                Por favor preencha o nome !
+            </div>
+        <div ng-show="formAdd.nome.$error.minlength" class="alert alert-danger">
+                Por favor digite no minimo 10 letras
+            </div>
+        <div ng-show="formAdd.nome.$error.pattern" class="alert alert-danger">
+            o campo telefone deve ter o formato DDDDD-DDDD
+            </div>
+            <div ng-show="formAdd.telefone.$invalid && formAdd.telefone.$dirty" class="alert alert-danger">
+                Por favor preencha o Telefone !
+            </div>
 
             <button class="btn btn-primary form-control" ng-click="adicionarContato(contato)" ng-disabled="!contato.nome || !contato.telefone"> Adcionar Contato</button>
             <button class="btn btn-danger form-control" ng-click="apagarContatos(contatos)" ng-show="isContatoSelecionado(contatos)"> Remover Contato</button>
